@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="report_service_contract_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">Reporte de Contrato de Servicio</h2>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Número de Contrato:</strong></td>
+                                        <td><span t-field="o.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cliente:</strong></td>
+                                        <td>
+                                            <span t-field="o.partner_id.name"/>
+                                            <div t-if="o.partner_id.vat">
+                                                RUC/CI: <span t-field="o.partner_id.vat"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Período del Contrato:</strong></td>
+                                        <td>
+                                            Desde: <span t-field="o.start_date" t-options="{'widget': 'date'}"/>
+                                            <br/>
+                                            Hasta: <span t-field="o.end_date" t-options="{'widget': 'date'}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Estado:</strong></td>
+                                        <td>
+                                            <span t-if="o.state == 'draft'" class="badge badge-secondary">Borrador</span>
+                                            <span t-if="o.state == 'active'" class="badge badge-success">Activo</span>
+                                            <span t-if="o.state == 'expired'" class="badge badge-danger">Expirado</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tarifa Mensual:</strong></td>
+                                        <td>
+                                            <span t-field="o.monthly_fee" 
+                                                  t-options="{'widget': 'monetary', 'display_currency': o.partner_id.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total Facturado:</strong></td>
+                                        <td>
+                                            <span t-field="o.total_invoiced" 
+                                                  t-options="{'widget': 'monetary', 'display_currency': o.partner_id.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4" t-if="o.invoice_ids">
+                            <div class="col-12">
+                                <h4>Facturas Generadas</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Número</th>
+                                            <th>Fecha</th>
+                                            <th class="text-right">Monto</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.invoice_ids" t-as="invoice">
+                                            <tr>
+                                                <td><span t-field="invoice.name"/></td>
+                                                <td><span t-field="invoice.invoice_date" t-options="{'widget': 'date'}"/></td>
+                                                <td class="text-right">
+                                                    <span t-field="invoice.amount_total" 
+                                                          t-options="{'widget': 'monetary', 'display_currency': invoice.currency_id}"/>
+                                                </td>
+                                                <td>
+                                                    <span t-if="invoice.state == 'draft'">Borrador</span>
+                                                    <span t-if="invoice.state == 'posted'">Publicada</span>
+                                                    <span t-if="invoice.state == 'cancel'">Cancelada</span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-12 text-muted text-center">
+                                <small>
+                                    Reporte generado el <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
